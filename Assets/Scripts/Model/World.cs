@@ -4,26 +4,26 @@ using AccidentalNoise;
 
 public class World
 { 
-    Tile[,] tiles;
-    public int width { get; }
-    public int height { get; }
+    Tile[,] Tiles;
+    public int Width { get; }
+    public int Height { get; }
 
     // Noise generator module
     ImplicitFractal HeightMap;
     int TerrainOctaves = 6;
     double TerrainFrequency = 1.25;
 
-    public World(int width = 100, int height = 100)
+    public World(int width = 40, int height = 40)
     {
-        this.width = width;
-        this.height = height;
-        tiles = new Tile[width, height];
+        this.Width = width;
+        this.Height = height;
+        Tiles = new Tile[width, height];
 
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                tiles[x, y] = new Tile(this, x, y);
+                Tiles[x, y] = new Tile(this, x, y);
             }
         }
 
@@ -40,9 +40,9 @@ public class World
 
     public void GenerateTilesHight() {
         // loop through each x,y point - get height value
-        for (var x = 0; x < width; x++)
+        for (var x = 0; x < Width; x++)
         {
-            for (var y = 0; y < height; y++)
+            for (var y = 0; y < Height; y++)
             {
 
                 // Noise range
@@ -52,8 +52,8 @@ public class World
                 float dy = y2 - y1;
 
                 // Sample noise at smaller intervals
-                float s = x / (float)width;
-                float t = y / (float)height;
+                float s = x / (float)Width;
+                float t = y / (float)Height;
 
                 // Calculate our 4D coordinates
                 float nx = x1 + Mathf.Cos(s * 2 * Mathf.PI) * dx / (2 * Mathf.PI);
@@ -63,7 +63,7 @@ public class World
 
                 float heightValue = (float)HeightMap.Get(nx, ny, nz, nw);
 
-                tiles[x, y].height = heightValue;
+                Tiles[x, y].height = heightValue;
             }
         }
     }
@@ -73,31 +73,47 @@ public class World
     {
         Debug.Log("World randomized tiles");
 
-        for (int x = 0; x < width; x++)
+        for (int x = 0; x < Width; x++)
         {
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < Height; y++)
             {
 
                 if (Random.Range(0, 2) == 0)
                 {
-                    tiles[x, y].type = Tile.TileType.Dirt;
+                    Tiles[x, y].type = Tile.TileType.Dirt;
                 }
                 else
                 {
-                    tiles[x, y].type = Tile.TileType.Empty;
+                    Tiles[x, y].type = Tile.TileType.Empty;
                 }
             }
         }
     }
 
+
+    public void ResetSetAllTiles()
+    {
+        for (int x = 0; x < Width; x++)
+        {
+            for (int y = 0; y < Height; y++)
+            {
+                Tiles[x, y].type = Tile.TileType.Dirt;
+            }
+        }
+    }
+
+
     public Tile GetTileAt(int x, int y)
     {
-        if (x < 0 || x >= width || y < 0 || y >= height)
+        if (x < 0)
         {
-            Debug.LogError("Tile (" + x + "," + y + ") is out of range.");
-            return null;
+            x = Width + (x % Width);
         }
-        return tiles[x, y];
+        if (y < 0) {
+            y = Height + (y % Height);
+        }
+
+        return Tiles[x % Width, y % Height];
     }
 
 }

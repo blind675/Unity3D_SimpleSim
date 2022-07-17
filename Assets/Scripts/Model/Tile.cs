@@ -2,7 +2,7 @@ using System;
 
 public class Tile {
 
-  public enum TileType { Dirt, Sand, Grass, Rock, Water, Empty };
+  public enum TileType { Test, Dirt, Sand, Grass, Rock, Water, Empty };
 
   Action<Tile> cbTileTypeChanged;
 

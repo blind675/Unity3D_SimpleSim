@@ -1,0 +1,41 @@
+﻿<Properties StartupConfiguration="{889E1B78-14DA-4755-4D61-A2143BF4B25C}|">
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Controllers/WorldController.cs">
+    <Files>
+      <File FileName="Assets/Scripts/Controllers/WorldController.cs" Line="82" Column="10" />
+      <File FileName="Assets/Scripts/Model/World.cs" Line="94" Column="33" />
+      <File FileName="Assets/Scripts/Model/Tile.cs" Line="14" Column="10" />
+      <File FileName="Assets/Scripts/Controllers/MouseController.cs" Line="24" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Unity3D_SimpleSim" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Scripts" expanded="True">
+                <Node name="Controllers" expanded="True">
+                  <Node name="WorldController.cs" selected="True" />
+                </Node>
+                <Node name="Model" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State />
+      </Pad>
+      <Pad Id="MonoDevelop.UnitTesting.TestPad">
+        <State name="__root__">
+          <Node name="Unity" selected="True" />
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="450337fd-7431-4feb-ba95-53f63c86a16e" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+</Properties>
