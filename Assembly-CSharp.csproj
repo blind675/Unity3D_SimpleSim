@@ -57,8 +57,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets/Scripts/Controllers/MouseController.cs" />
+    <Compile Include="Assets/Scripts/Controllers/UIController.cs" />
+    <Compile Include="Assets/Scripts/Utils/Extensions.cs" />
     <Compile Include="Assets/Scripts/Model/Tile.cs" />
     <Compile Include="Assets/Scripts/Model/World.cs" />
+    <Compile Include="Assets/Scripts/Utils/Generator.cs" />
     <Compile Include="Assets/Scripts/Controllers/WorldController.cs" />
   </ItemGroup>
   <ItemGroup>

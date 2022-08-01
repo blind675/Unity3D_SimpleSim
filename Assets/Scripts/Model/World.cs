@@ -1,107 +1,106 @@
 using UnityEngine;
-using System.Collections;
-using AccidentalNoise;
 
 public class World
-{ 
-    Tile[,] Tiles;
+{
+    Tile[,] tiles;
     public int Width { get; }
     public int Height { get; }
 
-    // Noise generator module
-    ImplicitFractal HeightMap;
-    int TerrainOctaves = 6;
-    double TerrainFrequency = 1.25;
-
-    public World(int width = 40, int height = 40)
+    public World(int width = 100, int height = 100)
     {
         this.Width = width;
         this.Height = height;
-        Tiles = new Tile[width, height];
-
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                Tiles[x, y] = new Tile(this, x, y);
-            }
-        }
+        tiles = Generator.GenerateWorld(width, height);
 
         Debug.Log("World created with " + (width * height) + " tiles");
 
-        HeightMap = new ImplicitFractal(FractalType.MULTI,
-                                       BasisType.SIMPLEX,
-                                       InterpolationType.QUINTIC,
-                                       TerrainOctaves,
-                                       TerrainFrequency,
-                                       UnityEngine.Random.Range(0, int.MaxValue));
-
     }
 
-    public void GenerateTilesHight() {
-        // loop through each x,y point - get height value
-        for (var x = 0; x < Width; x++)
-        {
-            for (var y = 0; y < Height; y++)
-            {
-
-                // Noise range
-                float x1 = 0, x2 = 2;
-                float y1 = 0, y2 = 2;
-                float dx = x2 - x1;
-                float dy = y2 - y1;
-
-                // Sample noise at smaller intervals
-                float s = x / (float)Width;
-                float t = y / (float)Height;
-
-                // Calculate our 4D coordinates
-                float nx = x1 + Mathf.Cos(s * 2 * Mathf.PI) * dx / (2 * Mathf.PI);
-                float ny = y1 + Mathf.Cos(t * 2 * Mathf.PI) * dy / (2 * Mathf.PI);
-                float nz = x1 + Mathf.Sin(s * 2 * Mathf.PI) * dx / (2 * Mathf.PI);
-                float nw = y1 + Mathf.Sin(t * 2 * Mathf.PI) * dy / (2 * Mathf.PI);
-
-                float heightValue = (float)HeightMap.Get(nx, ny, nz, nw);
-
-                Tiles[x, y].height = heightValue;
-            }
-        }
-    }
-
-
-    public void RandomizeTiles()
+    public void SetTilesForHeight()
     {
-        Debug.Log("World randomized tiles");
-
         for (int x = 0; x < Width; x++)
         {
             for (int y = 0; y < Height; y++)
             {
+                Tile tile = GetTileAt(x, y);
 
-                if (Random.Range(0, 2) == 0)
+                if (tile.Height > 0.95)
                 {
-                    Tiles[x, y].type = Tile.TileType.Dirt;
+                    tile.type = Tile.TileType.Snow;
+                }
+                else if (tile.Height > 0.87)
+                {
+                    tile.type = Tile.TileType.Rock;
                 }
                 else
                 {
-                    Tiles[x, y].type = Tile.TileType.Empty;
+                    tile.type = Tile.TileType.Dirt;
                 }
+                //else if (tile.Height > 0.50)
+                //{
+                //    tile.type = Tile.TileType.Grass;
+                //}
+                //else if (tile.Height > 0.20)
+                //{
+                //    tile.type = Tile.TileType.Dirt;
+                //}
+                //else if (tile.Height > 0.10)
+                //{
+                //    tile.type = Tile.TileType.Water;
+                //}
+                //else
+                //{
+                //    tile.type = Tile.TileType.DeepWater;
+                //}
+
+                Tile.Orientation maxSlopOrientation = new Tile.Orientation();
+                float maxSloapValue = float.NegativeInfinity;
+
+                for (int xOffset = -1; xOffset < 2; xOffset++)
+                {
+                    for (int yOffset = -1; yOffset < 2; yOffset++)
+                    {
+                        Tile adjacentTile = GetTileAt(x + xOffset, y + yOffset);
+                        float sloap = tile.Height - adjacentTile.Height;
+
+                        if (sloap > 0 && sloap > maxSloapValue)
+                        {
+                            maxSlopOrientation = new Tile.Orientation(xOffset, yOffset);
+                            maxSloapValue = sloap;
+                        }
+                    }
+                }
+
+                tile.SloapValue = maxSloapValue;
+                tile.SloapOrientation = maxSlopOrientation;
             }
         }
     }
 
-
-    public void ResetSetAllTiles()
+    public void GenerateSprings()
     {
+        int probability = 5;
+
         for (int x = 0; x < Width; x++)
         {
             for (int y = 0; y < Height; y++)
             {
-                Tiles[x, y].type = Tile.TileType.Dirt;
+                Tile tile = GetTileAt(x, y);
+
+                if (tile.Height > 0.8 && tile.Height < 0.83)
+                {
+                    if (Random.Range(0, 99) < probability)
+                    {
+                        tile.type = Tile.TileType.Water;
+                        probability = 5;
+                    }
+                    else {
+                        probability++;
+                    }
+                }
             }
         }
     }
-
 
     public Tile GetTileAt(int x, int y)
     {
@@ -109,11 +108,12 @@ public class World
         {
             x = Width + (x % Width);
         }
-        if (y < 0) {
+        if (y < 0)
+        {
             y = Height + (y % Height);
         }
 
-        return Tiles[x % Width, y % Height];
+        return tiles[x % Width, y % Height];
     }
 
 }

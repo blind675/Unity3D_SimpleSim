@@ -13,11 +13,15 @@ public class WorldController : MonoBehaviour
 
     public Sprite dirtSprite1;
     public Sprite dirtSprite2;
+    public Sprite snowSprite1;
+    public Sprite rockSprite1;
+    public Sprite rockSprite2;
+    public Sprite waterSprite1;
 
     public World World {get; protected set;}
 
     // Start is called before the first frame update
-    void Start()
+    void Awake ()
     {
         if (Instance != null) {
             Debug.LogError("Multiple World Controllers");
@@ -25,12 +29,10 @@ public class WorldController : MonoBehaviour
 
         Instance = this;
 
-
         float viewHeight = Camera.main.orthographicSize * 2.0f;
         float viewWidth = viewHeight * Screen.width / Screen.height;
 
         World = new World();
-        World.GenerateTilesHight();
 
         // create a game object to represent each tile
         for (int x = -Mathf.FloorToInt(viewWidth); x < World.Width + Mathf.FloorToInt(viewWidth); x++)
@@ -48,7 +50,8 @@ public class WorldController : MonoBehaviour
             }
         }
 
-        World.ResetSetAllTiles();
+        World.SetTilesForHeight();
+        World.GenerateSprings();
 
         // create a game object to represent each tile
         //for (int x = -Mathf.FloorToInt(viewWidth); x < World.Width + Mathf.FloorToInt(viewWidth); x++)
@@ -71,9 +74,15 @@ public class WorldController : MonoBehaviour
 
         //    }
         //}
-
     }
 
+    public Tile GetTileAtWorldCoord(Vector3 coord)
+    {
+        int x = Mathf.FloorToInt(coord.x);
+        int y = Mathf.FloorToInt(coord.y);
+
+        return World.GetTileAt(x, y);
+    }
 
     void OnTileTypeChanged(Tile tile_data, GameObject tile_go)
     {
@@ -81,12 +90,27 @@ public class WorldController : MonoBehaviour
         switch (tile_data.type)
         {
             case Tile.TileType.Dirt:
-                tile_go.GetComponent<SpriteRenderer>().sprite = UnityEngine.Random.Range(0, 2) == 0 ? dirtSprite1 : dirtSprite2;
+                //tile_go.GetComponent<SpriteRenderer>().sprite = UnityEngine.Random.Range(0, 2) == 0 ? dirtSprite1 : dirtSprite2;
+                tile_go.GetComponent<SpriteRenderer>().sprite = dirtSprite1;
                 break;
+            case Tile.TileType.Rock:
+                tile_go.GetComponent<SpriteRenderer>().sprite = UnityEngine.Random.Range(0, 2) == 0 ? rockSprite1 : rockSprite2;
+                break;
+            case Tile.TileType.Snow:
+                tile_go.GetComponent<SpriteRenderer>().sprite = snowSprite1;
+                break;
+            //case Tile.TileType.Grass:
+            //    tile_go.GetComponent<SpriteRenderer>().sprite = grassSprite1;
+            //    break;
+            case Tile.TileType.Water:
+                tile_go.GetComponent<SpriteRenderer>().sprite = waterSprite1;
+                break;
+            //case Tile.TileType.DeepWater:
+            //    tile_go.GetComponent<SpriteRenderer>().sprite = deepWaterSprite1;
+            //    break;
             default:
                 tile_go.GetComponent<SpriteRenderer>().sprite = null;
                 break;
         }
-
     }
 }
